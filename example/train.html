@@ -1,0 +1,41 @@
+<task name="first_task" tml_version="0.1">
+    <!-- <data type="buildin" src="fashion_mnist">
+        <process x_mean="/ 255.0" y_mean="/ 28.0"></process>
+        <batch batch_size="32" shuffle_size="10000"></batch>
+    </data> -->
+
+    <data type="local" train_dir="./images/train/" test_dir="./images/test/">
+        <csv train_file="./images/train.csv" test_file="./images/test.csv" image="[0]" label="[1:3]" />
+        <process channels="3" resize="3, 3" x_mean="/ 255.0" y_mean="/ 28.0"></process>
+        <batch batch_size="32" shuffle_size="10000" />
+    </data>
+
+    <model name="model" inputs="input1" outputs="dense2">
+        <input shape="28,28,1" name="input1"></input>
+        <!-- <padding name="padding" size="2,2"></padding> -->
+        <conv2d filters="16" kernel="3" name="conv1" activation="relu" strides=2 padding='same'></conv2d>
+        <conv2d filters="32" kernel="3" name="conv2" activation="relu"></conv2d>
+        <conv2d filters="32" kernel="3" name="conv3" activation="relu" layer="conv2"></conv2d>
+        <!-- <add name="add1" layers="conv1,conv2"></add>
+        <concat name="concat1" layers="conv1,conv2"></concat> -->
+        <flatten name="flatten"></flatten>
+        <!-- <reshape name="reshape1" target_shape="128,128,3" layer="flatten"></reshape> -->
+        <!-- <conv2d-transpose filters="32" kernel="3" strides=2 name="deconv" activation="relu" padding='same'></conv2d-transpose> -->
+        <!-- <softmax name="softmax" layer="deconv"></softmax>
+        <dropout name="dropout" rate="0.2"></dropout>
+        <relu name="relu" layer="dropout"></relu> -->
+        <lrelu name="relu" alpha="0.3"></lrelu>
+        <!-- <maxpool name="pool" size="3" strides="2"></maxpool> -->
+        <dense units="10" name="dense1" activation="relu"></dense>
+        <dense units="10" name="dense2"></dense>
+        <!-- <batch-normalization name="bn"></batch-normalization> -->
+        <!-- <activation name="softmax" type="softmax"></activation> -->
+    </model>
+
+    <train epoch="100">
+        <loss type="bce"></loss>
+        <metrics type="bm"></metrics>
+        <optimizer type="adam" lr="1e-4"></optimizer>
+        <result save_path="./result" ckpt="epoch>=0"></result>
+    </train>
+</task>
